@@ -16,16 +16,33 @@ function HeroGraph({ data, onNodeClick }) {
       .attr('width', width)
       .attr('height', height);
 
+    // Arrowhead definition
+    svg.append('defs').selectAll('marker')
+        .data(['end'])      // Different arrowhead types can be defined here
+        .enter().append('marker')
+        .attr('id', String)
+        .attr('viewBox', '0 -5 10 10')
+        .attr('refX', 15)   // Adjust these numbers to move the position where the arrowhead appears
+        .attr('refY', -0.5)
+        .attr('markerWidth', 10)
+        .attr('markerHeight', 10)
+        .attr('orient', 'auto')
+        .append('path')
+        .attr('d', 'M0,-5L10,0L0,5')
+        .attr('class', 'arrowhead');
+
     const simulation = d3.forceSimulation(data.nodes)
       .force('link', d3.forceLink(data.links).id(d => d.id).distance(400))
-      .force('charge', d3.forceManyBody().strength(-50))
+      //.force('charge', d3.forceManyBody().strength(-50))
+      .force('charge', d3.forceManyBody().strength(-10))
       .force('center', d3.forceCenter(width / 2, height / 2));
 
     const link = svg.append('g')
       .selectAll('line')
       .data(data.links)
       .enter().append('line')
-      .attr('stroke', '#aaa'); // Added this line
+      .attr('stroke', '#aaa') // 링크에 색 표시
+      .attr('marker-end', 'url(#end)'); // Apply the marker-end attribute here
 
     const node = svg.append('g')
       .selectAll('circle')
